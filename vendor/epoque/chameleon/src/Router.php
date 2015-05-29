@@ -46,9 +46,30 @@ class Router
 
     private function validRoute($route)
     {
-        return True;
+        if (is_view($route) && ! ignored($route)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
+    private function ignored($route) {
+        $ignored = array();
+        $rp = $route->responseFile;
+        $ext = pathinfo($rp)['extension'];
+
+        // adds ignore constants to ignored array
+        array_push($ignored, explode(' ', IGNORE_FILES));
+        array_push($ignored, explode(' ', IGNORE_EXT));
+
+        if (in_array(basename($rp), $ignored) 
+            || in_array($ext, $ignored)) {
+
+            return false;
+        } else {
+            return true;
+        }
+    }
 
     protected function isView($route)
     {
